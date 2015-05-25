@@ -3,6 +3,8 @@
  */
 package com.app.coolweather.db;
 
+import com.app.coolweather.util.LogUtil;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +16,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class CoolWeatherOpenHelper extends SQLiteOpenHelper{
 	
+	private static final String TAG = "DBOpenHelper";
+	
 	/**creates provinces table statement.*/
 	private static final String CREATE_TABLE_PROVINCES = "create table provinces ("
 				+ "province_id integer primary key autoincrement,"
@@ -24,13 +28,13 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper{
 				+ "city_id integer primary key autoincrement,"
 				+ "city_code text,"
 				+ "city_name text,"
-				+ "province_id integer)";
+				+ "province_code text)";
 	/**creates counties table statement.*/
 	private static final String CREATE_TABLE_COUNTIES = "create table counties ("
 				+ "county_id integer primary key autoincrement,"
 				+ "county_code text,"
 				+ "county_name text,"
-				+ "city_id integer)";
+				+ "city_code text)";
 	
 	public CoolWeatherOpenHelper(Context context, String name,
 			CursorFactory factory, int version) {
@@ -39,6 +43,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		LogUtil.d(TAG, "exec onCreate()");
 		//creates provinces table.
 		db.execSQL(CREATE_TABLE_PROVINCES);
 		//creates cities table.
@@ -49,6 +54,15 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper{
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		LogUtil.d(TAG, "exec onUpgrade()");
+		switch (oldVersion) {
+		case 1:
+			db.execSQL(CREATE_TABLE_CITIES);
+			db.execSQL(CREATE_TABLE_COUNTIES);
+			break;
+		default:
+			break;
+		}
 		
 	}
 	
